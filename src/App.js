@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
-import { Grid } from "@material-ui/core";
-import "./App.css";
+import { useState, useEffect, useContext, createContext } from "react";
 
-const useContribution = () => {
-  const [totalContributions, setTotalContributions] = useState(0);
-  const [contributionWeek, setContributionWeek] = useState([]);
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+const Contribution = () => {
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalContributions, setTotalContributions] = useState([]);
   const API_KEY = process.env.REACT_APP_API_KEY;
+  const github = ["#eeeeee", "#9be9a8", "#40c463", "#30a14e", "#216e39"];
   const headers = {
     "Content-type": "application/json",
     Authorization: "token " + API_KEY,
@@ -32,71 +34,73 @@ const useContribution = () => {
   };
 
   useEffect(() => {
-    fetch("https://api.github.com/graphql", {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(gql),
-    })
-      .then((response) => response.json()) //Converting the response to a JSON object
-      .then((response) => response.data)
-      .then((data) => {
-        const totalCount =
-          data.user.contributionsCollection.contributionCalendar
-            .totalContributions;
-        setTotalContributions(totalCount);
-        setContributionWeek(
-          data.user.contributionsCollection.contributionCalendar.weeks
-        );
+    const fetchData = () => {
+      fetch("https://api.github.com/graphql", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(gql),
       })
-      .catch((error) => console.error(error));
+        .then((response) => response.json()) //Converting the response to a JSON object
+        .then(
+          (response) =>
+            response.data.user.contributionsCollection.contributionCalendar
+        )
+        .then((response) => {
+          setTotalCount(response.totalContributions);
+          return response.weeks;
+        })
+        .then((res) => {
+          let result = [];
+          for (let i = 0; i < res.length; i++) {
+            result.push(res[i].contributionDays);
+          }
+          setTotalContributions(result);
+        })
+        .then((res) => console.log("Success"))
+        .catch((error) => console.error(error));
+    };
+
+    fetchData();
   }, []);
 
-  return { totalContributions, contributionWeek };
-};
-
-const ContributionVisualizer = (props) => {
-  const week = props.week;
-  const contributionsAll = week.map((data) => data.contributionDays);
-  const github = ["#eeeeee", "#9be9a8", "#40c463", "#30a14e", "#216e39"];
-
-  const r = contributionsAll.map((contributionsWeek) =>
-    contributionsWeek.map((contrib) => {
-      let color = '#ffffff';
-      if (contrib.contributionCount >= 4) {
-        color = github[4]
-      } else {
-        color = github[contrib.contributionCount]
-      }
-      return (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            margin: " 10px 10vw",
-            backgroundColor: color,
-          }}
-        >
-          <div>{contrib.date}</div>
-          <div>{contrib.contributionCount}</div>
-        </div>
-      );
-    })
+  return (
+    <div>
+      <h1>{totalCount}</h1>
+      <div style={{ width: "100vw", height: "100vh", background: "pink" }}>
+        <svg style={{background: 'white', width: '200vh'}}>
+          {totalContributions.map((contribution, idx) =>
+            contribution.map((contrib, index) => {
+              console.log(index, idx);
+              let color = '#eeeeee';
+              if (contrib.contributionCount >= 4) {
+                color = github[4]
+              } else {
+                color = github[contrib.contributionCount]
+              }
+              return (
+                <rect
+                  x={14 * idx}
+                  y={14 * index}
+                  width={12}
+                  height={12}
+                  fill={color}
+                />
+              );
+            })
+          )}
+        </svg>
+      </div>
+    </div>
   );
-
-  var d = new Date("2021-06-21");
-  console.log(d.getDay());
-  return r;
+  // return <div>{!isLoading ? (<svg>{contribution}</svg>) : (<span> is .. loading ... </span>)}</div>;
 };
 
 function App() {
-  const { totalContributions, contributionWeek } = useContribution();
-
   // console.log(contributionVisualizer(contributionWeek));
   return (
     <div className="App">
-      <h1>Total Contributions : {totalContributions}</h1>
       <h3>specific</h3>
-      <ContributionVisualizer week={contributionWeek} />
+      <Contribution />
     </div>
   );
 }
