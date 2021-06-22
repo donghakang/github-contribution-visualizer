@@ -1,5 +1,5 @@
-
-import Api from '../services/Api'
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import Api from "../services/Api";
 
 const Contribution = () => {
   const github = ["#eeeeee", "#9be9a8", "#40c463", "#30a14e", "#216e39"];
@@ -16,13 +16,22 @@ const Contribution = () => {
             color = github[contrib.contributionCount];
           }
           return (
-            <rect
-              x={14 * idx + 1}
-              y={14 * index + 1}
-              width={12}
-              height={12}
-              fill={color}
-            />
+            <OverlayTrigger
+              placement="bottom"
+              overlay={
+                <Tooltip id="button-tooltip">
+                  {contrib.date}<br/><strong>contribution </strong>: {contrib.contributionCount}
+                </Tooltip>
+              }
+            >
+              <rect
+                x={14 * idx + 1}
+                y={14 * index + 1}
+                width={12}
+                height={12}
+                fill={color}
+              />
+            </OverlayTrigger>
           );
         })
       )}

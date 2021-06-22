@@ -55,7 +55,7 @@ const Contribution3D = () => {
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
         <Boxes />
-        <OrbitControls />
+        <OrbitControls enableZoom={false} />
       </Canvas>
     </>
   );
