@@ -49,7 +49,7 @@ const Contribution3D = () => {
   return (
     <>
       <Canvas
-        style={{ width: "100vw", height: "100vh" }}
+        style={{ width: "100%", height: "100%" }}
         camera={{ fov: 70, position: [25, 17, 25] }}
       >
         <ambientLight />

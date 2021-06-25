@@ -43,45 +43,56 @@ const ContributionCircle = () => {
     return d;
   }
 
+  console.log(totalContributions.slice(-4))
   return (
-    <svg width={500} height={500} style={{ background: "white" }}>
-      {/* <circle cx="250" cy="250" r="100" fill={github[0]}> */}
-      {totalContributions.map((contribution, index) =>
-        contribution.map((contrib, idx) => {
-          let color = "#eeeeee";
-          if (contrib.contributionCount >= 4) {
-            color = github[4];
-          } else {
-            color = github[contrib.contributionCount];
-          }
-          // return <line x1="0" x2="10" y1="0" y2="10" stroke="red" fillOpacity />;
-          return (
-            <OverlayTrigger
-              placement="bottom"
-              overlay={
-                <Tooltip id="button-tooltip">
-                  {contrib.date}
-                  <br />
-                  <strong>contribution </strong>: {contrib.contributionCount}
-                </Tooltip>
-              }
-            >
-              <path
-                fill={color}
-                d={describeArc(
-                  250,
-                  250,
-                  100 + 10 * contrib.contributionCount,
-                  idx + index * 7,
-                  idx + index * 7 + 360.0 / (idx * index * 7)
-                )}
-              />
-            </OverlayTrigger>
-          );
-        })
-      )}
-      {/* </circle> */}
-    </svg>
+    <div style={{ width:'100%', height: "100%", display: "flex", alignItems: "center" }}>
+      <svg width={500} height={500} style={{ background: "white", margin: 'auto' }}>
+        {/* <circle cx="250" cy="250" r="100" fill={github[0]}> */}
+        {totalContributions.slice(-5).map((contribution, index) =>
+          contribution.map((contrib, idx) => {
+            let color = "#eeeeee";
+            if (contrib.contributionCount >= 4) {
+              color = github[4];
+            } else {
+              color = github[contrib.contributionCount];
+            }
+
+            let sz = 0
+            for (var i = 0; i < totalContributions.slice(-5).length; i++) {
+                sz += totalContributions[i].length
+            }
+
+
+            
+            console.log( sz, (index * 7.0 + idx ) * (365.0 / sz ), (index * 7.0 + idx ) * (365.0 / sz ) + (365.0 / sz))
+            // return <line x1="0" x2="10" y1="0" y2="10" stroke="red" fillOpacity />;
+            return (
+                <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  <Tooltip id="button-tooltip">
+                    {contrib.date}
+                    <br />
+                    <strong>contribution </strong>: {contrib.contributionCount}
+                  </Tooltip>
+                }
+              >
+                <path
+                  fill={color}
+                  d={describeArc(
+                    250,
+                    250,
+                    100 + 10 * contrib.contributionCount,
+                    (index * 7 + idx ) * (365 / sz ), 
+                    (index * 7 + idx ) * (365 / sz ) + (365 / sz)
+                  )}
+                />
+              </OverlayTrigger>
+            );
+          })
+        )}
+      </svg>
+    </div>
   );
 };
 
