@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 
-const Api = () => {
+function useGetContribution(user) {
   const [totalCount, setTotalCount] = useState(0);
   const [totalContributions, setTotalContributions] = useState([]);
   const API_KEY = process.env.REACT_APP_API_KEY;
+
   const headers = {
     "Content-type": "application/json",
     Authorization: "token " + API_KEY,
@@ -11,7 +12,7 @@ const Api = () => {
   const gql = {
     query: `
   {
-    user(login: "donghakang") {
+    user(login: "${user}") {
       contributionsCollection {
         contributionCalendar {
           totalContributions
@@ -60,6 +61,6 @@ const Api = () => {
   }, []);
 
   return { totalCount, totalContributions };
-};
+}
 
-export default Api;
+export default useGetContribution;
