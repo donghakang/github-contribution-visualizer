@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
-function useGetContribution(user) {
-  const [totalCount, setTotalCount] = useState(0);
-  const [totalContributions, setTotalContributions] = useState([]);
+function useGetContribution(user: string) {
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [totalContributions, setTotalContributions] = useState<any>([]);
   const API_KEY = process.env.REACT_APP_API_KEY;
 
   const headers = {
